@@ -164,7 +164,6 @@ var CONST_MIN_BANK = 1000;
                         } //else if you can cash out, cash out
                         else if (!safecard && !btn_cashout.hasAttribute("disabled")) {
                             console.log("ITS A DANGEROUS CARD, I'M CASHING OUT");
-                            console.log("ABOUT TO CALL clickAny(btn_cashout)");
                             clickAny(btn_cashout);
                         } //else bid accordingly
                         else {
@@ -184,10 +183,8 @@ var CONST_MIN_BANK = 1000;
 
 
                     }
-                    //console.log(btn_bet_low);
                 },DECISION_DELAY); //TIME BETWEEN BID DECISIONS
             }
-            console.log("Finished loop "+numloops);
             numloops++;
             setTimeout(playHiLoLoop,DECISION_DELAY);
         }

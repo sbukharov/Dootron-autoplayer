@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         DooTron script
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  try to take over the world!
-// @author       You
+// @author       Sergey, Karl helped
 // @match        https://dootron.com/hilo
-// @grant        none
+// @grant        for personal use only :^)
 // ==/UserScript==
 
 var _2C = "/assets/hilo/poker/0.png";
@@ -79,13 +79,14 @@ var safe_high_cards = [AC,AD,AH,AS, KC,KD,KH,KS, QC,QD,QH,QS];
 var safe_low_cards = [_2C,_2D,_2H,_2S, _3C,_3D,_3H,_3S, _4C,_4S,_4H,_4S];
 
 
-var CONST_BET_VALUE = 100;
-var CONST_CLICKSPEED = 500; //ms
+const CONST_BET_VALUE = 101; //the amount you want to bet per round
+const DECISION_DELAY = 2500; //amount of time in ms between deciding what to do next (Don't set too low because dootron can be slow)
+const CONST_CLICKSPEED = 500; //ms
 
 // Safety feature - max number of executions for test
-var CONST_MAX_LOOPS = 4;
+var CONST_MAX_LOOPS = 100;
 // Safety feature - the lowest you want your bank to go
-var CONST_MIN_BANK = 12000;
+var CONST_MIN_BANK = 1000;
 
 
 (function() {
@@ -112,12 +113,15 @@ var CONST_MIN_BANK = 12000;
             let numloops = 0;
             //CAUTION - SET TIMEOUT JUST DELAYS THE EXECUTIOn - the loop runs several times, making the same decision, then executes it later.
             //need to implement a queue or something to wait for it to finish processing the first action before doing the next one
-            while (numloops < CONST_MAX_LOOPS && parseFloat(output_trx_balance.innerHTML) > CONST_MIN_BANK) {
-                if (document.getElementsByClassName("loading-card-face").length == 0) {
+            playHiLoLoop();
 
-                    continue;
-                }
-                //give enough time for the cards to flip
+
+        function playHiLoLoop() {
+            if (!(numloops < CONST_MAX_LOOPS && parseFloat(output_trx_balance.innerHTML) > CONST_MIN_BANK))
+                return;
+            //make sure the game has loaded before doing anything
+            if (document.getElementsByClassName("loading-card-face").length == 0) {
+            //give enough time for the cards to flip
                 setTimeout(function(){
                     console.log("Starting loop "+numloops+" - bank has  "+output_trx_balance.innerHTML);
 
@@ -126,11 +130,12 @@ var CONST_MIN_BANK = 12000;
 
                     //check card, if no card, click bet
                     if (btn_bet_high.hasAttribute("disabled")){
+                        //set bet value to const
+                        input_bet.value = CONST_BET_VALUE;
                         clickAny(btn_start);
                     } else {
                         //check card
                         var current_card = getCurrentCard();
-                        //console.log(current_card);
 
                         let safecard = false;
 
@@ -149,48 +154,40 @@ var CONST_MIN_BANK = 12000;
                         if (safecard) {
                             console.log("ITS A SAFE CARD");
                             if (shouldIBetHigh()) {
-                                console.log("ABOUT TO CALL clickBetHigh");
-                                //clickBetHigh();
+                                console.log("Betting high");
+                                clickBetHigh();
                             } else {
-                                console.log("ABOUT TO CALL clickBetLow");
-                                //ickBetLow();
+                                console.log("Betting low");
+                                clickBetLow();
                             }
 
                         } //else if you can cash out, cash out
                         else if (!safecard && !btn_cashout.hasAttribute("disabled")) {
-                            console.log("ITS A DANGEROUS CARD SO I'M CASHING OUT");
-                            console.log("ABOUT TO CALL clickAny(btn_cashout)");
-                            //clickAny(btn_cashout)
+                            console.log("ITS A DANGEROUS CARD, I'M CASHING OUT");
+                            clickAny(btn_cashout);
                         } //else bid accordingly
                         else {
 
-                            console.log("ITS A DANGEROUS CARD BUT I HAVE TO BID");
+                            console.log("ITS A DANGEROUS CARD BUT ITS THE FIRST ROUND SO I HAVE TO BET");
                             if (shouldIBetHigh()) {
-                                console.log("ABOUT TO CALL clickBetHigh");
-                                //clickBetHigh();
+                                console.log("Betting high");
+                                clickBetHigh();
                             } else {
-                                console.log("ABOUT TO CALL clickBetLow");
-                                //clickBetLow();
+                                console.log("Betting low");
+                                clickBetLow();
                             }
 
                         }
-                        console.log(getBackgroundURL(current_card));
 
 
 
 
                     }
-                    //console.log(btn_bet_low);
-                },1500); //TIME BETWEEN BID DECISIONS
-
-
-                console.log("Finished loop "+numloops);
-                numloops++;
+                },DECISION_DELAY); //TIME BETWEEN BID DECISIONS
             }
-
-            //simulateclick(btn_start);
-
-
+            numloops++;
+            setTimeout(playHiLoLoop,DECISION_DELAY);
+        }
         }, 3000);
     }
 })();
@@ -219,7 +216,7 @@ function clickBetHigh() {
 
 function clickBetLow() {
     setTimeout(function(){
-        var buttontoclick = document.getElementsByClassName("btn btn-link btn-high").item(0);
+        var buttontoclick = document.getElementsByClassName("btn btn-link btn-low").item(0);
         simulateclick(buttontoclick);
     },CONST_CLICKSPEED)
 }
@@ -242,7 +239,7 @@ function getBackgroundURL(elem) {
 
 function simulateclick(elm) {
      var evt = document.createEvent('MouseEvents');
-     evt.initMouseEvent('click', true, true, window, 0, 1, 1, 1, 1, false, false, false, false, 0, null);
+     evt.initMouseEvent('click', true, true, null, 0, 1, 1, 1, 1, false, false, false, false, 0, null);
      elm.dispatchEvent(evt);
 }
 

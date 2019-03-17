@@ -75,8 +75,8 @@ var AS = "/assets/hilo/poker/51.png";
 
 
 
-var safe_high_cards = [AC,AD,AH,AS, KC,KD,KH,KS, QC,QD,QH,QS];
-var safe_low_cards = [_2C,_2D,_2H,_2S, _3C,_3D,_3H,_3S, _4C,_4S,_4H,_4S];
+var safe_high_cards = [AC,AD,AH,AS, KC,KD,KH,KS, QC,QD,QH,QS,JC,JS,JH,JD];
+var safe_low_cards = [_2C,_2D,_2H,_2S, _3C,_3D,_3H,_3S, _4C,_4S,_4H,_4D, _5C, _5S, _5H, _5D];
 
 
 const CONST_BET_VALUE = 101; //the amount you want to bet per round
@@ -84,9 +84,9 @@ const DECISION_DELAY = 2500; //amount of time in ms between deciding what to do 
 const CONST_CLICKSPEED = 500; //ms
 
 // Safety feature - max number of executions for test
-var CONST_MAX_LOOPS = 100;
+var CONST_MAX_LOOPS = 2500;
 // Safety feature - the lowest you want your bank to go
-var CONST_MIN_BANK = 1000;
+var CONST_MIN_BANK = 500;
 
 
 (function() {

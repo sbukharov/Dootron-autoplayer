@@ -179,7 +179,6 @@ var CONST_MIN_BANK = 1000;
                             }
 
                         }
-                        console.log(getBackgroundURL(current_card));
 
 
 

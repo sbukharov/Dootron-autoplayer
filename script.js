@@ -77,9 +77,19 @@ var AS = "/assets/hilo/poker/51.png";
 
 var safe_high_cards = [AC,AD,AH,AS, KC,KD,KH,KS, QC,QD,QH,QS,JC,JS,JH,JD];
 var safe_low_cards = [_2C,_2D,_2H,_2S, _3C,_3D,_3H,_3S, _4C,_4S,_4H,_4D, _5C, _5S, _5H, _5D];
+var sessionStats = {
+    plays : 0,
+    wins : 0,
+    losses : 0,
+    totalBet : 0,
+    totalWon : 0,
+    longestStreak : 0,
+    streaksGTEFive : 0
+
+}
 
 
-const CONST_BET_VALUE = 101; //the amount you want to bet per round
+const CONST_BET_VALUE = 100; //the amount you want to bet per round
 const DECISION_DELAY = 2500; //amount of time in ms between deciding what to do next (Don't set too low because dootron can be slow)
 const CONST_CLICKSPEED = 500; //ms
 
@@ -92,8 +102,8 @@ var CONST_MIN_BANK = 500;
 (function() {
     'use strict';
     window.onload = function() {
+        alert("DooTron Autoplay: Please set your bet amount manually, the bot will start playing in 3 seconds.")
         setTimeout(function(){
-
             //betting button
             var btn_start = document.getElementsByClassName("btn btn-link state-start").item(0);
             //cashout button
@@ -102,13 +112,15 @@ var CONST_MIN_BANK = 500;
             var input_bet = document.getElementById("stake");
             //TRX balance span
             var output_trx_balance = document.getElementById("navbarNav").childNodes[1].childNodes[1].childNodes[0].childNodes[1].childNodes[0];
+            //current winnings amount
+            var output_winning_amount = document.getElementsByClassName("award-board").item(0).getElementsByClassName("ng-star-inserted").item(0);
+            //console.log(output_winning_amount.innerHTML);
             //bet high button
             var btn_bet_high = document.getElementsByClassName("btn btn-link btn-high").item(0);
             //bet low button
             var btn_bet_low = document.getElementsByClassName("btn btn-link btn-low").item(0);
             //button to cashout
             var btn_cashout = document.getElementsByClassName("btn btn-link award-withdraw").item(0);
-
 
             let numloops = 0;
             //CAUTION - SET TIMEOUT JUST DELAYS THE EXECUTIOn - the loop runs several times, making the same decision, then executes it later.
@@ -127,11 +139,14 @@ var CONST_MIN_BANK = 500;
 
                     //set bet value to const
                     input_bet.value = CONST_BET_VALUE;
+                    //$(input_bet).trigger(jQuery.Event('keypress', { keycode: 13 }));
 
                     //check card, if no card, click bet
                     if (btn_bet_high.hasAttribute("disabled")){
                         //set bet value to const
                         input_bet.value = CONST_BET_VALUE;
+                        //$(input_bet).trigger(jQuery.Event('keypress', { keycode: 13 }));
+                        sessionStats.plays++;
                         clickAny(btn_start);
                     } else {
                         //check card
@@ -233,8 +248,8 @@ function getCurrentCard() {
     return cards.item(cards.length-1);
 }
 
-function getBackgroundURL(elem) {
-    return elem.style.backgroundImage.substr(5).slice(0, -2);
+function getBackgroundURL(elm) {
+    return elm.style.backgroundImage.substr(5).slice(0, -2);
 }
 
 function simulateclick(elm) {
@@ -242,4 +257,3 @@ function simulateclick(elm) {
      evt.initMouseEvent('click', true, true, null, 0, 1, 1, 1, 1, false, false, false, false, 0, null);
      elm.dispatchEvent(evt);
 }
-

@@ -4,6 +4,7 @@
 1. You need the TronLink Chrome Extension [Download from chrome store](https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec)
 2. Follow the steps needed to make a TronLink account
 3. Send some TRON to your TronLink address (see below)
+
 ![TronLink screenshot](https://coincodex.com/en/resources/images//admin/news/how-to-create-a-tron/tronwalletguide3.png)
 
 # How to run
